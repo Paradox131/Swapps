@@ -10,5 +10,6 @@ namespace Swapps.Data
         {
         }
         public DbSet<Swapps.Models.Donation> Donation { get; set; } = default!;
+        public DbSet<Donation> Donations { get; set; }
     }
 }

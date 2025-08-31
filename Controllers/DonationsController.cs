@@ -86,76 +86,6 @@ namespace Swapps.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,DonorName,Amount,Message")] Donation donation)
-        {
-            if (id != donation.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(donation);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DonationExists(donation.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(donation);
-        }
-
-        // GET: Donations/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var donation = await _context.Donation
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (donation == null)
-            {
-                return NotFound();
-            }
-
-            return View(donation);
-        }
-
-        // POST: Donations/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var donation = await _context.Donation.FindAsync(id);
-            if (donation != null)
-            {
-                _context.Donation.Remove(donation);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool DonationExists(int id)
-        {
-            return _context.Donation.Any(e => e.Id == id);
-        }
-
-        [HttpPost]
         public IActionResult CreateCheckoutSession(Donation donation)
         {
             var options = new SessionCreateOptions
@@ -167,7 +97,7 @@ namespace Swapps.Controllers
                 {
                     PriceData = new SessionLineItemPriceDataOptions
                     {
-                        UnitAmount = (long)(donation.Amount * 100), // cents
+                        UnitAmount = (long)(donation.Amount * 100),
                         Currency = "eur",
                         ProductData = new SessionLineItemPriceDataProductDataOptions
                         {
@@ -178,7 +108,12 @@ namespace Swapps.Controllers
                 }
             },
                 Mode = "payment",
-                SuccessUrl = Url.Action("Success", "Donation", null, Request.Scheme),
+                SuccessUrl = Url.Action("Success", "Donation", new
+                {
+                    donorName = donation.DonorName,
+                    amount = donation.Amount,
+                    message = donation.Message
+                }, Request.Scheme),
                 CancelUrl = Url.Action("Cancel", "Donation", null, Request.Scheme)
             };
 
@@ -188,9 +123,20 @@ namespace Swapps.Controllers
             return Redirect(session.Url);
         }
 
-        public IActionResult Success()
+        public IActionResult Success(string donorName, decimal amount, string message)
         {
-            return View();
+            // Save donation in DB
+            var donation = new Donation
+            {
+                DonorName = donorName,
+                Amount = amount,
+                Message = message
+            };
+
+            _context.Donations.Add(donation);
+            _context.SaveChanges();
+
+            return View(donation);
         }
 
         public IActionResult Cancel()

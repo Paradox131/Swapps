@@ -1,0 +1,26 @@
+﻿@model IEnumerable<Donation>
+
+<h2>All Donations</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Donor Name</th>
+            <th>Amount</th>
+            <th>Message</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var d in Model)
+        {
+            <tr>
+                <td>@d.DonorName</td>
+                <td>@String.Format("€{0:F2}", d.Amount)</td>
+                <td>@d.Message</td>
+                <td>@d.Id</td> 
+                <td>@d.CreatedDate.ToLocalTime().ToString("g")</td>
+            </tr>
+        }
+    </tbody>
+</table>

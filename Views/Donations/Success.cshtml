@@ -1,1 +1,9 @@
-﻿<h2>🎉 Thank you for your donation!</h2>
+﻿@model Donation
+
+<h2>🎉 Thank you for your donation, @Model.DonorName!</h2>
+<p>We received your donation of <strong>$@Model.Amount</strong>.</p>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <p>Your message: "@Model.Message"</p>
+}
