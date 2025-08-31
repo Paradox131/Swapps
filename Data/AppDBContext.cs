@@ -9,5 +9,6 @@ namespace Swapps.Data
         public AppDbContext(DbContextOptions options) : base(options)
         {
         }
+        public DbSet<Swapps.Models.Donation> Donation { get; set; } = default!;
     }
 }

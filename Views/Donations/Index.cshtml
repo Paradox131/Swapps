@@ -1,0 +1,25 @@
+﻿@model Donation
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Make a Donation</h2>
+
+<form asp-action="CreateCheckoutSession" method="post">
+    <div>
+        <label>Name:</label>
+        <input asp-for="DonorName" />
+        <span asp-validation-for="DonorName"></span>
+    </div>
+    <div>
+        <label>Amount (€):</label>
+        <input asp-for="Amount" />
+        <span asp-validation-for="Amount"></span>
+    </div>
+    <div>
+        <label>Message:</label>
+        <textarea asp-for="Message"></textarea>
+    </div>
+    <button type="submit">Donate with Stripe</button>
+</form>
