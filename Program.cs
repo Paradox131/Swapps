@@ -49,4 +49,11 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+// Seed data
+//using (var scope = app.Services.CreateScope())
+//{
+ //   var services = scope.ServiceProvider;
+ //   await SeedData.InitializeAsync(services);
+//}
+
 app.Run();
